@@ -1,9 +1,7 @@
 package life;
 
 
-import life.view.WindowWorld;
 import life.world.World;
-
 import java.util.Scanner;
 
 public class Main {
@@ -22,7 +20,8 @@ public class Main {
             e.printStackTrace();
         }
 
-
     }
+
+
 }
 
