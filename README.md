@@ -11,7 +11,7 @@ Evolution is controlled by two rules:
 * An alive cell survives if has two or three alive neighbours otherwise it dies of bored or overpopulation
 * A dead cell is reborn if it has exactly three alive neighbours
 
-##Input data
+## Input data
 User inputs three numbers N, S, M:
 * N (N>0) is size of the universe N x N
 * S is a seed used for a Random object
@@ -22,7 +22,7 @@ Project is created with:
 * Java 11
 * Swing
 
-##NOTE! Project is still in progress...
+## NOTE! Project is still in progress...
 To-do list:
 * Adding buttons: pause/resume and start over
 * Adding slider for changing speed mode
