@@ -1,46 +1,71 @@
 package life.world;
 
-import life.utils.Counter;
 import life.utils.WorldPrinter;
+import life.utils.WorldThread;
 import life.view.WindowWorld;
 
+import java.util.Scanner;
+
+
 public class World {
+    private int worldSize;
+    private long seed;
     private int numberOfGenerations;
+    private int numberOfCurrentGeneration;
     private boolean[][] world;
     private WorldPrinter printer;
+    private EvolutionController evolutionController;
+    private WorldThread worldThread;
     private WindowWorld windowWorld;
+    private Scanner sc = new Scanner(System.in);
 
-    public World(int worldSize, long seed, int numberOfGenerations) {
-        this.numberOfGenerations = numberOfGenerations;
-        world = new boolean[worldSize][worldSize];
+
+    public World() {
+        setStartPoints();
+        this.printer = new WorldPrinter();
+        this.evolutionController = new EvolutionController(this);
+        generateLife(seed);
+    }
+
+    public World(WindowWorld windowWorld) {
+        this();
+        this.windowWorld = windowWorld;
+    }
+
+    public void setStartPoints() {
+        this.worldSize = sc.nextInt();
+        this.seed = sc.nextLong();
+        this.numberOfGenerations = sc.nextInt();
+        this.numberOfCurrentGeneration = 0;
+        this.world = new boolean[worldSize][worldSize];
+    }
+
+    public void generateLife(long seed) {
         LifeGenerator lifeGenerator = new LifeGenerator(seed);
         lifeGenerator.populateWorld(world);
-        printer = new WorldPrinter();
-        windowWorld = new WindowWorld(this);
+    }
+
+    public void start() {
+        worldThread = new WorldThread(this);
+        Thread thread = new Thread(worldThread);
+        thread.setDaemon(true);
+        worldThread.setStopped(false);
+        thread.start();
     }
 
 
 
-    public void lifeCycle() throws InterruptedException {
-        EvolutionController evolutionController = new EvolutionController(this);
-        for (int i = 0; i < numberOfGenerations + 1 ; i++) {
-            printer.printWorld(world, i);
-            manageWindow(i);
-            letThemLive(evolutionController);
-            Thread.sleep(2000);
-        }
+    public void lifeCycle() {
+        printer.printWorld(world, numberOfCurrentGeneration);
+        windowWorld.manageWindow(numberOfCurrentGeneration);
+        letThemLive();
+        numberOfCurrentGeneration++;
     }
 
-    private void manageWindow(int numberOfGeneration){
-        windowWorld.getGrid().setWorldGrid(world);
-        windowWorld.setNumberForGenerationLabel(numberOfGeneration);
-        windowWorld.setNumberOfAliveCells(Counter.countAlive(world));
-        windowWorld.repaint();
-    }
 
-    private void letThemLive(EvolutionController ev){
-        ev.setWorldGrid(world);
-        this.world = ev.birthControl();
+    private void letThemLive() {
+        evolutionController.setWorldGrid(world);
+        this.world = evolutionController.birthControl();
     }
 
 
@@ -48,5 +73,28 @@ public class World {
         return world;
     }
 
+    public int getNumberOfCurrentGeneration() {
+        return numberOfCurrentGeneration;
+    }
 
+
+    public int getNumberOfGenerations() {
+        return numberOfGenerations;
+    }
+
+    public WorldThread getWorldThread() {
+        return worldThread;
+    }
+
+    public WindowWorld getWindowWorld() {
+        return windowWorld;
+    }
+
+    public void setEvolutionController(EvolutionController evolutionController) {
+        this.evolutionController = evolutionController;
+    }
+
+    public long getSeed() {
+        return seed;
+    }
 }

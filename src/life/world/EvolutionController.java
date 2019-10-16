@@ -1,6 +1,6 @@
 package life.world;
 
-class EvolutionController {
+public class EvolutionController {
     private boolean[][] worldGrid;
     private NeighbourState neighbourState;
 
@@ -33,7 +33,7 @@ class EvolutionController {
         return numberOfAliveNeighbours;
     }
 
-    private boolean[][] checkNeighboursAndStateIfNeeded(int i, int j, boolean[][] newWorld) {
+    private void checkNeighboursAndStateIfNeeded(int i, int j, boolean[][] newWorld) {
         int numberOfAliveNeighbours = countNeighbours(i, j);
         if (worldGrid[i][j] && (numberOfAliveNeighbours < 2 || numberOfAliveNeighbours > 3)) {
             newWorld[i][j] = false;
@@ -42,7 +42,6 @@ class EvolutionController {
         } else {
             newWorld[i][j] = worldGrid[i][j];
         }
-        return newWorld;
     }
 
     public void setWorldGrid(boolean[][] worldGrid) {

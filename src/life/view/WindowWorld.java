@@ -1,8 +1,8 @@
 package life.view;
 
 
-import life.utils.Constants;
 import life.utils.Counter;
+import life.utils.Variables;
 import life.world.World;
 
 import javax.swing.*;
@@ -10,59 +10,67 @@ import java.awt.*;
 
 public class WindowWorld extends JFrame {
     private World world;
+    private MenuPanel menuPanel;
     private int worldSize;
-    private int preferredWindowXSize;
-    private int preferredWindowYSize;
-    private DescriptionLabel generationLabel;
-    private DescriptionLabel aliveCountLabel;
     private GridCells grid;
+    private int screenWidth;
+    private int screenHeight;
 
-    public WindowWorld(World world) {
+    public WindowWorld() {
         super("Game of Life");
-        this.world = world;
+        this.world = new World(this);
         this.worldSize = world.getWorld().length;
+        this.grid = new GridCells(world.getWorld());
+        this.grid.setLocation(100, 0);
+        this.menuPanel = new MenuPanel(world);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSizes();
-        setSize(preferredWindowXSize, preferredWindowYSize);
-        this.setPreferredSize(new Dimension(preferredWindowXSize, preferredWindowYSize));
-        grid = new GridCells(world.getWorld());
-        setGenerationLabel();
-        setAliveCountLabel();
-        add(generationLabel);
-        add(aliveCountLabel);
+
+
+        setLayout(null);
         add(grid);
-        pack();
-        setLocationRelativeTo(null);
+        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        setLocation((screenWidth - getWidth())/2, (screenHeight - getHeight())/2);
         setVisible(true);
+        setResizable(true);
+        world.start();
     }
 
     private void setPreferredSizes() {
-        this.preferredWindowXSize = worldSize * Constants.CELL_SIZE + 50;
-        this.preferredWindowYSize = worldSize * Constants.CELL_SIZE + 100;
+        this.setPreferredSize(new Dimension(preferredWindowXSize(), preferredWindowYSize()));
+        this.setSize(preferredWindowXSize(), preferredWindowYSize());
     }
 
-    private void setGenerationLabel() {
-        generationLabel = new DescriptionLabel();
-        generationLabel.setBounds(0, 0, 150, 20);
-        generationLabel.setText("Generation #0");
+    public int preferredWindowXSize(){
+        return worldSize * Variables.cellSize + grid.getLocation().x + 25;
+    }
+    public int preferredWindowYSize(){
+        return worldSize * Variables.cellSize + 100;
     }
 
-    private void setAliveCountLabel() {
-        aliveCountLabel = new DescriptionLabel();
-        aliveCountLabel.setBounds(0, 15, 150, 20);
-        aliveCountLabel.setText("Alive: " + Counter.countAlive(world.getWorld()));
+    public void setPreferredSizes(int worldSize) {
+        this.worldSize = worldSize;
+        setPreferredSizes();
     }
 
 
-    public void setNumberForGenerationLabel(int number) {
-        generationLabel.setText("Generation #" + number);
-    }
-
-    public void setNumberOfAliveCells(int alive) {
-        aliveCountLabel.setText("Alive: " + alive);
+    public void manageWindow(int numberOfGeneration) {
+        grid.setWorldGrid(world.getWorld());
+        menuPanel.setNumberForGenerationLabel(numberOfGeneration);
+        menuPanel.setNumberOfAliveCells(Counter.countAlive(world.getWorld()));
+        this.repaint();
     }
 
     public GridCells getGrid() {
         return grid;
+    }
+
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
     }
 }
