@@ -8,6 +8,7 @@ import life.world.World;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.Flow;
 
 public class MenuPanel {
     private DescriptionLabel generationLabel;
@@ -18,10 +19,9 @@ public class MenuPanel {
     public MenuPanel(World world) {
         this.world = world;
         this.container = world.getWindowWorld().getContentPane();
-
         buildButtons();
         buildDescriptionsPanel();
-        container.add(buildWorldSizeSlider());
+        container.add(buildWordSizeJSpinner());
     }
 
     private void setGenerationLabel() {
@@ -95,11 +95,6 @@ public class MenuPanel {
                 Thread thread = new Thread(world.getWorldThread());
                 thread.setDaemon(true);
                 thread.start();
-                try {
-                    world.getThread().join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 world.getWorldThread().notify();
             }
         });
@@ -113,15 +108,12 @@ public class MenuPanel {
         container.add(aliveCountLabel);
     }
 
-    private JSlider buildWorldSizeSlider(){
-        JSlider jSlider = new JSlider(JSlider.HORIZONTAL, 2, 150, 50);
-        jSlider.setMajorTickSpacing(10);
-        jSlider.setMinorTickSpacing(1);
-        jSlider.setPaintTicks(true);
-        jSlider.setPaintLabels(true);
-        jSlider.setLocation(0, 200);
-        jSlider.setVisible(true);
-        jSlider.setToolTipText("Asdasd");
-        return jSlider;
+    private JSpinner buildWordSizeJSpinner() {
+        JSpinner jSpinner = new JSpinner();
+        jSpinner.setLocation(0, 100);
+        jSpinner.setSize(100, 20);
+        jSpinner.setMaximumSize(new Dimension(100, 20));
+        jSpinner.setToolTipText("Size");
+        return jSpinner;
     }
 }

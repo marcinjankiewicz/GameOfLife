@@ -21,11 +21,12 @@ public class WindowWorld extends JFrame {
         this.world = new World(this);
         this.worldSize = world.getWorld().length;
         this.grid = new GridCells(world.getWorld());
-        this.grid.setLocation(120, 0);
+        this.grid.setLocation(125, 0);
         this.menuPanel = new MenuPanel(world);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSizes();
-        setLayout(null);
+
+        setLayout(new GroupLayout(this.getContentPane()));
         add(grid);
         screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
         screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
