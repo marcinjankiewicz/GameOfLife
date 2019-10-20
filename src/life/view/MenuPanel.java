@@ -21,6 +21,7 @@ public class MenuPanel {
 
         buildButtons();
         buildDescriptionsPanel();
+        container.add(buildWorldSizeSlider());
     }
 
     private void setGenerationLabel() {
@@ -91,6 +92,14 @@ public class MenuPanel {
             window.setLocation((window.getScreenWidth() - window.getWidth()) / 2, (window.getScreenHeight() - window.getHeight()) / 2);
             synchronized (world.getWorldThread()) {
                 world.getWorldThread().setStopped(false);
+                Thread thread = new Thread(world.getWorldThread());
+                thread.setDaemon(true);
+                thread.start();
+                try {
+                    world.getThread().join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 world.getWorldThread().notify();
             }
         });
@@ -102,5 +111,17 @@ public class MenuPanel {
         setAliveCountLabel();
         container.add(generationLabel);
         container.add(aliveCountLabel);
+    }
+
+    private JSlider buildWorldSizeSlider(){
+        JSlider jSlider = new JSlider(JSlider.HORIZONTAL, 2, 150, 50);
+        jSlider.setMajorTickSpacing(10);
+        jSlider.setMinorTickSpacing(1);
+        jSlider.setPaintTicks(true);
+        jSlider.setPaintLabels(true);
+        jSlider.setLocation(0, 200);
+        jSlider.setVisible(true);
+        jSlider.setToolTipText("Asdasd");
+        return jSlider;
     }
 }

@@ -18,6 +18,7 @@ public class World {
     private WorldThread worldThread;
     private WindowWorld windowWorld;
     private Scanner sc = new Scanner(System.in);
+    private Thread thread;
 
 
     public World() {
@@ -47,7 +48,7 @@ public class World {
 
     public void start() {
         worldThread = new WorldThread(this);
-        Thread thread = new Thread(worldThread);
+        thread = new Thread(worldThread);
         thread.setDaemon(true);
         worldThread.setStopped(false);
         thread.start();
@@ -96,5 +97,9 @@ public class World {
 
     public long getSeed() {
         return seed;
+    }
+
+    public Thread getThread() {
+        return thread;
     }
 }
