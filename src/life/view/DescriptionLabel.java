@@ -10,6 +10,6 @@ public class DescriptionLabel extends JLabel {
     public DescriptionLabel(){
         super();
         this.setFont(new Font("Calibri", Font.BOLD, Constants.FONT_SIZE));
-        this.setSize(100, 20);
+        this.setSize(140, 20);
     }
 }

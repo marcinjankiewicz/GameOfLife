@@ -16,7 +16,7 @@ public class WorldThread implements Runnable {
             try {
                 while(world.getNumberOfCurrentGeneration() < world.getNumberOfGenerations() + 1 && !isStopped) {
                     world.lifeCycle();
-                    Thread.sleep(2000);
+                    Thread.sleep(Variables.timeToSleep);
                     if(isStopped) {
                         System.out.println("Going to wait()");
                         this.wait();
@@ -37,4 +37,5 @@ public class WorldThread implements Runnable {
     public boolean isStopped() {
         return isStopped;
     }
+
 }

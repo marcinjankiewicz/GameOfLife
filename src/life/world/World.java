@@ -22,7 +22,11 @@ public class World {
 
 
     public World() {
-        setStartPoints();
+        this.worldSize = 50;
+        this.seed = 10;
+        this.numberOfGenerations = 100;
+        this.numberOfCurrentGeneration = 0;
+        this.world = new boolean[worldSize][worldSize];
         this.printer = new WorldPrinter();
         this.evolutionController = new EvolutionController(this);
         generateLife(seed);
@@ -33,13 +37,7 @@ public class World {
         this.windowWorld = windowWorld;
     }
 
-    public void setStartPoints() {
-        this.worldSize = sc.nextInt();
-        this.seed = sc.nextLong();
-        this.numberOfGenerations = sc.nextInt();
-        this.numberOfCurrentGeneration = 0;
-        this.world = new boolean[worldSize][worldSize];
-    }
+
 
     public void generateLife(long seed) {
         LifeGenerator lifeGenerator = new LifeGenerator(seed);
@@ -101,5 +99,29 @@ public class World {
 
     public Thread getThread() {
         return thread;
+    }
+
+    public void setWorldSize(int worldSize) {
+        this.worldSize = worldSize;
+    }
+
+    public void setSeed(long seed) {
+        this.seed = seed;
+    }
+
+    public void setNumberOfGenerations(int numberOfGenerations) {
+        this.numberOfGenerations = numberOfGenerations;
+    }
+
+    public void setNumberOfCurrentGeneration(int numberOfCurrentGeneration) {
+        this.numberOfCurrentGeneration = numberOfCurrentGeneration;
+    }
+
+    public void setWorld(boolean[][] world) {
+        this.world = world;
+    }
+
+    public int getWorldSize() {
+        return worldSize;
     }
 }

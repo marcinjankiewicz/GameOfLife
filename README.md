@@ -17,6 +17,12 @@ User inputs three numbers N, S, M:
 * S is a seed used for a Random object
 * M (M>=0) the number of generations the program should create
 
+Startup input is:
+* N = 50
+* S = 10
+* M = 100
+* time to repaint = 2s
+
 ## Technologies
 Project is created with:
 * Java 11
@@ -24,7 +30,5 @@ Project is created with:
 
 ## NOTE! Project is still in progress...
 To-do list:
-* Adding buttons: pause/resume and start over
-* Adding slider for changing speed mode
 * Adding fields to change cells size
 * Adding buttons and functionality save/load
