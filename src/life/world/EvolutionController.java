@@ -11,7 +11,7 @@ public class EvolutionController {
 
     public boolean[][] birthControl() {
         neighbourState.setWorld(worldGrid);
-        boolean [][] newWorld = new boolean[worldGrid.length][worldGrid.length];
+        boolean[][] newWorld = new boolean[worldGrid.length][worldGrid.length];
         for (int i = 0; i < worldGrid.length; i++) {
             for (int j = 0; j < worldGrid[i].length; j++) {
                 checkNeighboursAndStateIfNeeded(i, j, newWorld);

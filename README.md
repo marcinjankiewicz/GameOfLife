@@ -28,7 +28,17 @@ Project is created with:
 * Java 11
 * Swing
 
+## Window description
+There are three buttons on the top:
+* Run (with arrow) - starts game if was stopped, changes timeToSleep to the current selection
+* Pause - pauses the game
+* Start Over - start new game with parameters set in fields below
+
+## Saves and Loads
+Functionality to save current world available.
+The game state is saved under C:\Users\\%User%\GameOfLife\save.txt
+After loading the game starts from the last state with timeToSleep = 2s
+
 ## NOTE! Project is still in progress...
 To-do list:
 * Adding fields to change cells size
-* Adding buttons and functionality save/load

@@ -1,13 +1,12 @@
 package life.view;
 
-import life.utils.Counter;
-import life.utils.IconPath;
-import life.utils.Variables;
-import life.world.EvolutionController;
+import life.utils.*;
 import life.world.World;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class MenuPanel {
     private DescriptionLabel generationLabel;
@@ -28,10 +27,6 @@ public class MenuPanel {
         this.speedCombo = createSpeedComboBox();
         buildButtons();
         buildDescriptionsPanel();
-        container.add(sizeSpinner);
-        container.add(seedSpinner);
-        container.add(numOfGenerationsSpinner);
-        container.add(speedCombo);
     }
 
 
@@ -60,12 +55,15 @@ public class MenuPanel {
         container.add(buildRunButton());
         container.add(buildPauseButton());
         container.add(buildStartOverButton());
+        container.add(buildSaveButton());
+        container.add(buildLoadButton());
     }
 
     private JButton buildRunButton() {
         JButton run = new ActionButton(IconPath.RUN);
         run.setLocation(0, 20);
         run.addActionListener(click -> {
+            setTimeToSleep();
             if (world.getWorldThread().isStopped()) {
                 synchronized (world.getWorldThread()) {
                     world.getWorldThread().setStopped(false);
@@ -90,36 +88,71 @@ public class MenuPanel {
         startOver.setLocation(80, 20);
         startOver.addActionListener(click -> {
             world.getWorldThread().setStopped(true);
-            setStartPoints();
-            world.generateLife(world.getSeed());
-            world.setEvolutionController(new EvolutionController(world));
-            WindowWorld window = world.getWindowWorld();
-            window.getGrid().setWorldSize(world.getWorld().length);
-            window.getGrid().setWorldGrid(world.getWorld());
-            int preferredPanelSize = world.getWorld().length * Variables.cellSize + 25;
-            window.getGrid().setPreferredPanelSize(preferredPanelSize);
-            window.getGrid().setSize(preferredPanelSize, preferredPanelSize);
-            window.setPreferredSizes(world.getWorld().length);
-            window.setLocation((window.getScreenWidth() - window.getWidth()) / 2, (window.getScreenHeight() - window.getHeight()) / 2);
-            synchronized (world.getWorldThread()) {
-                world.getWorldThread().setStopped(false);
-                Thread thread = new Thread(world.getWorldThread());
-                thread.setDaemon(true);
-                thread.start();
-                world.getWorldThread().notify();
-            }
+            int worldSize = (int) sizeSpinner.getValue();
+            long seed = Long.parseLong(Integer.toString((int) seedSpinner.getValue()));
+            int numberOfGenerations = (int) numOfGenerationsSpinner.getValue();
+            world.createNewWorld(worldSize, seed, numberOfGenerations);
+            setTimeToSleep();
+            createNewWindowAndThread();
         });
         return startOver;
     }
 
-    private void setStartPoints() {
-        world.setWorldSize((int) sizeSpinner.getValue());
-        world.setSeed(Long.parseLong(Integer.toString((int) seedSpinner.getValue())));
-        world.setNumberOfGenerations((int) numOfGenerationsSpinner.getValue());
-        world.setNumberOfCurrentGeneration(0);
-        world.setWorld(new boolean[world.getWorldSize()][world.getWorldSize()]);
+    private void setTimeToSleep() {
         Variables.timeToSleep = (int) ((double) speedCombo.getSelectedItem() * 1000);
     }
+
+    private JButton buildSaveButton() {
+        JButton save = new ActionButton("Save");
+        save.setLocation(0, 180);
+        save.addActionListener(click -> {
+            Saver saver = new Saver(world);
+            try {
+                saver.saveWorld();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return save;
+    }
+
+    private JButton buildLoadButton() {
+        JButton load = new ActionButton("Load");
+        load.setLocation(0, 210);
+        load.addActionListener(click -> {
+            world.getWorldThread().setStopped(true);
+            Loader loader = new Loader(world);
+            try {
+                loader.loadWorld();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            createNewWindowAndThread();
+        });
+        return load;
+    }
+
+    private void createNewWindowAndThread() {
+        createNewWindowForWorld(world.getWindowWorld());
+        synchronized (world.getWorldThread()) {
+            world.getWorldThread().setStopped(false);
+            Thread thread = new Thread(world.getWorldThread());
+            thread.setDaemon(true);
+            thread.start();
+            world.getWorldThread().notify();
+        }
+    }
+
+    private void createNewWindowForWorld(WindowWorld window) {
+        window.getGrid().setWorldSize(world.getWorld().length);
+        window.getGrid().setWorldGrid(world.getWorld());
+        int preferredPanelSize = world.getWorld().length * Variables.cellSize + 25;
+        window.getGrid().setPreferredPanelSize(preferredPanelSize);
+        window.getGrid().setSize(preferredPanelSize, preferredPanelSize);
+        window.setPreferredSizes(world.getWorld().length);
+        window.setLocation((window.getScreenWidth() - window.getWidth()) / 2, (window.getScreenHeight() - window.getHeight()) / 2);
+    }
+
 
     private void buildDescriptionsPanel() {
         setGenerationLabel();
@@ -137,8 +170,8 @@ public class MenuPanel {
         JSpinner jSpinner = new JSpinner(model);
         jSpinner.setLocation(70, 100);
         jSpinner.setSize(50, 20);
-        jSpinner.setMaximumSize(new Dimension(100, 20));
         jSpinner.setToolTipText("Size");
+        container.add(jSpinner);
         return jSpinner;
     }
 
@@ -150,13 +183,13 @@ public class MenuPanel {
         JSpinner jSpinner = new JSpinner();
         jSpinner.setLocation(70, 120);
         jSpinner.setSize(50, 20);
-        jSpinner.setMaximumSize(new Dimension(100, 20));
         jSpinner.setToolTipText("Seed");
+        container.add(jSpinner);
         return jSpinner;
     }
 
     private JSpinner createNumOfGenerationSpinner() {
-        SpinnerNumberModel model = new SpinnerNumberModel(50, 1, 200, 1);
+        SpinnerNumberModel model = new SpinnerNumberModel(50, 1, 1000, 1);
         DescriptionLabel generationsLabel = new DescriptionLabel();
         generationsLabel.setText("Amount: ");
         generationsLabel.setLocation(0, 140);
@@ -164,8 +197,8 @@ public class MenuPanel {
         JSpinner jSpinner = new JSpinner(model);
         jSpinner.setLocation(70, 140);
         jSpinner.setSize(50, 20);
-        jSpinner.setMaximumSize(new Dimension(100, 20));
         jSpinner.setToolTipText("Number of generations");
+        container.add(jSpinner);
         return jSpinner;
     }
 
@@ -175,6 +208,7 @@ public class MenuPanel {
         speedLabel.setLocation(0, 160);
         container.add(speedLabel);
         JComboBox<Double> comboBox = new JComboBox<>();
+        comboBox.addItem(0.10);
         comboBox.addItem(0.25);
         comboBox.addItem(0.50);
         comboBox.addItem(1.0);
@@ -185,6 +219,7 @@ public class MenuPanel {
         comboBox.setLocation(70, 160);
         comboBox.setSize(50, 20);
         comboBox.setToolTipText("Speed");
+        container.add(comboBox);
         return comboBox;
     }
 }

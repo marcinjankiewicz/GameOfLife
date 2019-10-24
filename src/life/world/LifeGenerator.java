@@ -4,10 +4,8 @@ import java.util.Random;
 
 class LifeGenerator {
     private Random random;
-    private long seed;
 
     public LifeGenerator(long seed) {
-        this.seed = seed;
         random = new Random(seed);
     }
 

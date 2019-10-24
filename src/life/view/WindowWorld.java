@@ -30,7 +30,7 @@ public class WindowWorld extends JFrame {
         add(grid);
         screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
         screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
-        setLocation((screenWidth - getWidth())/2, (screenHeight - getHeight())/2);
+        setLocation((screenWidth - getWidth()) / 2, (screenHeight - getHeight()) / 2);
         setVisible(true);
         setResizable(true);
         world.start();
@@ -41,18 +41,18 @@ public class WindowWorld extends JFrame {
         this.setSize(preferredWindowXSize(), preferredWindowYSize());
     }
 
-    public int preferredWindowXSize(){
+    private int preferredWindowXSize() {
         return worldSize * Variables.cellSize + grid.getLocation().x + 25;
     }
-    public int preferredWindowYSize(){
-        return worldSize * Variables.cellSize + 100;
+
+    private int preferredWindowYSize() {
+        return Math.max(worldSize * Variables.cellSize + 70, 280);
     }
 
     public void setPreferredSizes(int worldSize) {
         this.worldSize = worldSize;
         setPreferredSizes();
     }
-
 
     public void manageWindow(int numberOfGeneration) {
         grid.setWorldGrid(world.getWorld());

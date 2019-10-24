@@ -36,7 +36,7 @@ public class GridCells extends JPanel {
                 g.drawRect(x, y, Variables.cellSize, Variables.cellSize);
                 if (worldGrid[horz][vert]) {
                     g.setColor(cellColor);
-                    g.fillRect(x+1, y+1, Variables.cellSize -1, Variables.cellSize -1);
+                    g.fillRect(x + 1, y + 1, Variables.cellSize - 1, Variables.cellSize - 1);
                     g.setColor(lineColor);
                 }
                 x += Variables.cellSize;

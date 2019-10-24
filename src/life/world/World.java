@@ -20,8 +20,7 @@ public class World {
     private Scanner sc = new Scanner(System.in);
     private Thread thread;
 
-
-    public World() {
+    private World() {
         this.worldSize = 50;
         this.seed = 10;
         this.numberOfGenerations = 100;
@@ -37,8 +36,6 @@ public class World {
         this.windowWorld = windowWorld;
     }
 
-
-
     public void generateLife(long seed) {
         LifeGenerator lifeGenerator = new LifeGenerator(seed);
         lifeGenerator.populateWorld(world);
@@ -52,21 +49,33 @@ public class World {
         thread.start();
     }
 
-
+    public void printWorld() {
+        windowWorld.manageWindow(numberOfCurrentGeneration);
+    }
 
     public void lifeCycle() {
-        printer.printWorld(world, numberOfCurrentGeneration);
-        windowWorld.manageWindow(numberOfCurrentGeneration);
-        letThemLive();
+        evolutionController.setWorldGrid(world);
+        this.world = evolutionController.birthControl();
         numberOfCurrentGeneration++;
     }
 
-
-    private void letThemLive() {
-        evolutionController.setWorldGrid(world);
-        this.world = evolutionController.birthControl();
+    public void createNewWorld(int worldSize, long seed, int numberOfGenerations) {
+        setStartPoints(worldSize, seed, numberOfGenerations);
+        generateLife(seed);
     }
 
+    private void setStartPoints(int worldSize, long seed, int numberOfGenerations) {
+        setStartPoints(worldSize, seed, numberOfGenerations, 0);
+    }
+
+    public void setStartPoints(int worldSize, long seed, int numberOfGenerations, int numberOfCurrentGeneration) {
+        this.worldSize = worldSize;
+        this.seed = seed;
+        this.numberOfGenerations = numberOfGenerations;
+        this.numberOfCurrentGeneration = numberOfCurrentGeneration;
+        this.world = new boolean[worldSize][worldSize];
+        setEvolutionController(new EvolutionController(this));
+    }
 
     public boolean[][] getWorld() {
         return world;
@@ -75,7 +84,6 @@ public class World {
     public int getNumberOfCurrentGeneration() {
         return numberOfCurrentGeneration;
     }
-
 
     public int getNumberOfGenerations() {
         return numberOfGenerations;
@@ -95,26 +103,6 @@ public class World {
 
     public long getSeed() {
         return seed;
-    }
-
-    public Thread getThread() {
-        return thread;
-    }
-
-    public void setWorldSize(int worldSize) {
-        this.worldSize = worldSize;
-    }
-
-    public void setSeed(long seed) {
-        this.seed = seed;
-    }
-
-    public void setNumberOfGenerations(int numberOfGenerations) {
-        this.numberOfGenerations = numberOfGenerations;
-    }
-
-    public void setNumberOfCurrentGeneration(int numberOfCurrentGeneration) {
-        this.numberOfCurrentGeneration = numberOfCurrentGeneration;
     }
 
     public void setWorld(boolean[][] world) {

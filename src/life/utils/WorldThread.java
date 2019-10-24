@@ -6,24 +6,25 @@ public class WorldThread implements Runnable {
     private volatile boolean isStopped = false;
     private World world;
 
-    public WorldThread(World world){
+    public WorldThread(World world) {
         this.world = world;
     }
 
     @Override
     public void run() {
-        synchronized(this) {
+        synchronized (this) {
             try {
-                while(world.getNumberOfCurrentGeneration() < world.getNumberOfGenerations() + 1 && !isStopped) {
-                    world.lifeCycle();
+                while (world.getNumberOfCurrentGeneration() < world.getNumberOfGenerations() + 1 && !isStopped) {
+                    world.printWorld();
                     Thread.sleep(Variables.timeToSleep);
-                    if(isStopped) {
+                    if (isStopped) {
                         System.out.println("Going to wait()");
                         this.wait();
                     }
+                    world.lifeCycle();
                 }
 
-            } catch(InterruptedException ie) {
+            } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
         }
